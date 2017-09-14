@@ -79,4 +79,4 @@ int main(int argc, char *argv[])
     init();
     glutMainLoop();
     return 0;
-}  glBegin(GL_QUADS);
+}  glBegin(GL_QUADS);.l

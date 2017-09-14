@@ -38,6 +38,19 @@ static void resize(int width, int height)
     glLoadIdentity() ;
 }
 
+void quadrado(){
+    glBegin(GL_QUADS);
+        glVertex2i(100,150);
+        glVertex2i(100,100);
+        glVertex2i(150,100);
+        glVertex2i(150,150);
+    glEnd();
+}
+
+void triangulo(){
+    
+}
+
 static void display(void)
 {
     const double t = glutGet(GLUT_ELAPSED_TIME) / 1000.0;
@@ -45,22 +58,24 @@ static void display(void)
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glColor3d(1,0,0);
-
-    glPushMatrix();
-        glTranslated(-2.4,1.2,-6);
+    
+        quad();
+    glPushMatrix(); // Esfera
+        glTranslated(-2.4,1.2,-6);/*
         glRotated(60,1,0,0);
         glRotated(a,0,0,1);
-        glutSolidSphere(1,slices,stacks);
+        glutSolidSphere(1,slices,stacks);*/
+        quad();
     glPopMatrix();
 
-    glPushMatrix();
+    glPushMatrix(); // Cone
         glTranslated(0,1.2,-6);
         glRotated(60,1,0,0);
         glRotated(a,0,0,1);
         glutSolidCone(1,1,slices,stacks);
     glPopMatrix();
 
-    glPushMatrix();
+    glPushMatrix(); // Rosca
         glTranslated(2.4,1.2,-6);
         glRotated(60,1,0,0);
         glRotated(a,0,0,1);
@@ -97,8 +112,13 @@ static void key(unsigned char key, int x, int y)
     switch (key)
     {
         case 27 :
-        case 'q':
             exit(0);
+            break;
+        case 'q':
+            glTranslatef(1,1,0);
+            break;
+        case 'w':
+            glTranslatef(-1,-1,0);
             break;
 
         case '+':
