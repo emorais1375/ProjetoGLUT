@@ -7,9 +7,18 @@
 
 #include <GL/glut.h>
 #include <stdio.h>
+#include <string.h>
+#include <math.h>
+// Constantes
+#define QUADRADO 1
+#define TRIANGULO 2
+#define CIRCULO   3
 
-GLfloat xf, yf, win;
-GLint view_w, view_h;
+// Variáveis
+char texto[30];
+GLfloat win, r, g, b, xf, yf;
+GLint view_w, view_h, primitiva;
+
 
 // Função callback chamada para fazer o desenho
 void DesenhaQ(void)
@@ -27,7 +36,60 @@ void DesenhaQ(void)
      glEnd();
      glFlush();
 }
+//Desenha triangulo
+void DesenhaT(void)
+{
+     glBegin(GL_TRIANGLES);
+               glVertex2f(-25.0f, -25.0f);
+               glVertex2f(0.0f, 25.0f);
+               glVertex2f(25.0f, -25.0f);              
+     glEnd();
+}
+//Desenha circulo
 
+void DesenhaC(GLfloat x, GLfloat y, GLfloat radius)
+{
+    int i;
+    int triangleAmount = 20; //# of triangles used to draw circle
+    //GLfloat radius = 0.8f; //radius
+    GLfloat twicePi = 2.0f * 3.141592;
+    
+    glBegin(GL_TRIANGLE_FAN);
+        glVertex2f(x, y); // center of circle
+        for(i = 0; i <= triangleAmount;i++) { 
+            glVertex2f(
+                    x + (radius * cos(i *  twicePi / triangleAmount)), 
+            y + (radius * sin(i * twicePi / triangleAmount))
+            );
+        }
+    glEnd();
+}
+// Função callback chamada para fazer o desenho
+void Desenha(void)
+{
+     glMatrixMode(GL_MODELVIEW);
+     glLoadIdentity();
+                   
+     glClear(GL_COLOR_BUFFER_BIT);
+     
+     // Define a cor corrente
+     glColor3f(r,g,b);
+
+     // Desenha uma primitiva     
+     switch (primitiva) {
+            case QUADRADO:  DesenhaQ();
+                            break;
+            case TRIANGULO: DesenhaT();
+                            break;
+            case CIRCULO:   DesenhaC(0.0f,0.0f,0.8f);                       
+                            break;
+     }
+
+     // Exibe a posição do mouse na janela
+     glColor3f(1.0f,1.0f,1.0f);
+     
+     glutSwapBuffers();
+}
 // Inicializa parâmetros de rendering
 void Inicializa (void)
 {   
@@ -72,18 +134,6 @@ void GerenciaTeclado(unsigned char key, int x, int y)
     glutPostRedisplay();
 }
            
-// Função callback chamada para gerenciar eventos do mouse
-void GerenciaMouse(int button, int state, int x, int y)
-{
-    if (button == GLUT_LEFT_BUTTON)
-         if (state == GLUT_DOWN) {
-                  // Troca o tamanho do retângulo, que vai do centro da 
-                  // janela até a posição onde o usuário clicou com o mouse
-                  xf = ( (2 * win * x) / view_w) - win;
-                  yf = ( ( (2 * win) * (y-view_h) ) / -view_h) - win;
-         }
-    glutPostRedisplay();
-}
 
 // Função callback chamada para gerenciar eventos do teclado   
 // para teclas especiais, tais como F1, PgDn e Home
@@ -103,38 +153,94 @@ void TeclasEspeciais(int key, int x, int y)
     }
     glutPostRedisplay();
 }
+// Gerenciamento do menu com as opções de cores           
+void MenuCor(int op)
+{
+   switch(op) {
+            case 0:
+                     r = 1.0f;
+                     g = 0.0f;
+                     b = 0.0f;
+                     break;
+            case 1:
+                     r = 0.0f;
+                     g = 1.0f;
+                     b = 0.0f;
+                     break;
+            case 2:
+                     r = 0.0f;
+                     g = 0.0f;
+                     b = 1.0f;
+                     break;
+    }
+    glutPostRedisplay();
+}           
+
+// Gerenciamento do menu com as opções de cores           
+void MenuPrimitiva(int op)
+{
+   switch(op) {
+            case 0:
+                     primitiva = QUADRADO;
+                     break;
+            case 1:
+                     primitiva = TRIANGULO;
+                     break;
+            case 2:
+                     primitiva = CIRCULO;
+                     break;
+    }
+    glutPostRedisplay();
+}  
+// Gerenciamento do menu principal           
+void MenuPrincipal(int op)
+{
+}
+// Criacao do Menu
+void CriaMenu() 
+{
+    int menu,submenu1,submenu2;
+
+    submenu1 = glutCreateMenu(MenuCor);
+    glutAddMenuEntry("Vermelho",0);
+    glutAddMenuEntry("Verde",1);
+    glutAddMenuEntry("Azul",2);
+
+    submenu2 = glutCreateMenu(MenuPrimitiva);
+    glutAddMenuEntry("Quadrado",0);
+    glutAddMenuEntry("Triangulo",1);
+    glutAddMenuEntry("Circulo",2);
+
+    menu = glutCreateMenu(MenuPrincipal);
+    glutAddSubMenu("Cor",submenu1);
+    glutAddSubMenu("Primitivas",submenu2);
+    
+    glutAttachMenu(GLUT_RIGHT_BUTTON);
+}
+// Função callback chamada para gerenciar eventos do mouse
+void GerenciaMouse(int button, int state, int x, int y)
+{        
+    if (button == GLUT_RIGHT_BUTTON)
+         if (state == GLUT_DOWN) 
+            CriaMenu();
+         
+    glutPostRedisplay();
+}
+
                       
 // Programa Principal 
 int main(int argc, char *argv[])
 {
-	char key;
+
      glutInit(&argc, argv);
-	 glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);     
      glutInitWindowSize(350,300);
      glutInitWindowPosition(10,10);
-     glutCreateWindow("Exemplo de Interacao");
-	printf("Selecione uma das seguintes formas:\nq-Quadrado\nt-Triangulo\nc-Circulo\n");
-	scanf("%c",&key);
-	switch (key){
-		case 'Q':
-		case 'q': //desenha o formato quadrado
-			 glutDisplayFunc(DesenhaQ);
-			 break;
-		case 'T':
-		case 't'://desenha o formato triangulo
-			 //glutDisplayFunc(DesenhaT);
-			 break;
-		case 'C':
-		case 'c'://desenha o formato circulo
-			 //glutDisplayFunc(DesenhaC);
-			 break;
-	}
-	
-    
+     glutCreateWindow("Exemplo de Menu e Exibicao de Caracteres");
+     glutDisplayFunc(Desenha);
      glutReshapeFunc(AlteraTamanhoJanela);
-     glutKeyboardFunc(GerenciaTeclado);
-     glutMouseFunc(GerenciaMouse);
-     glutSpecialFunc(TeclasEspeciais);     
+     glutMouseFunc(GerenciaMouse);    
+     glutSpecialFunc(TeclasEspeciais); 
      Inicializa();
      glutMainLoop();
 }
