@@ -16,8 +16,8 @@
 
 // Variáveis
 char texto[30];
-GLfloat win, r, g, b, xf, yf;
-GLint view_w, view_h, primitiva;
+GLfloat win, r=1, g=0, b=0, xf, yf;
+GLint view_w, view_h, primitiva = QUADRADO;
 
 
 // Função callback chamada para fazer o desenho
@@ -81,7 +81,7 @@ void Desenha(void)
                             break;
             case TRIANGULO: DesenhaT();
                             break;
-            case CIRCULO:   DesenhaC(0.0f,0.0f,0.8f);                       
+            case CIRCULO:   DesenhaC(0.0f,0.0f,30.0f);                       
                             break;
      }
 
@@ -94,7 +94,7 @@ void Desenha(void)
 void Inicializa (void)
 {   
     // Define a cor de fundo da janela de visualização como preta
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     xf=50.0f;
     yf=50.0f;
     win=250.0f;
@@ -114,26 +114,7 @@ void AlteraTamanhoJanela(GLsizei w, GLsizei h)
     gluOrtho2D (-win, win, -win, win);
 }
 
-// Função callback chamada para gerenciar eventos de teclado
-void GerenciaTeclado(unsigned char key, int x, int y)
-{
-    switch (key) {
-            case 'R': 
-            case 'r':// muda a cor corrente para vermelho
-                     glColor3f(1.0f, 0.0f, 0.0f);
-                     break;
-            case 'G':
-            case 'g':// muda a cor corrente para verde
-                     glColor3f(0.0f, 1.0f, 0.0f);
-                     break;
-            case 'B':
-            case 'b':// muda a cor corrente para azul
-                     glColor3f(0.0f, 0.0f, 1.0f);
-                     break;
-    }
-    glutPostRedisplay();
-}
-           
+       
 
 // Função callback chamada para gerenciar eventos do teclado   
 // para teclas especiais, tais como F1, PgDn e Home
@@ -141,18 +122,32 @@ void TeclasEspeciais(int key, int x, int y)
 {
     if(key == GLUT_KEY_UP) {
            win -= 20;
-           glMatrixMode(GL_PROJECTION);
-           glLoadIdentity();
-           gluOrtho2D (-win, win, -win, win);
     }
-    if(key == GLUT_KEY_DOWN) {
+    else if(key == GLUT_KEY_DOWN) {
            win += 20;
-           glMatrixMode(GL_PROJECTION);
-           glLoadIdentity();
-           gluOrtho2D (-win, win, -win, win);
+    }
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D (-win, win, -win, win);
+    glutPostRedisplay();
+}
+
+// Função callback chamada para gerenciar eventos de teclado
+void GerenciaTeclado(unsigned char key, int x, int y)
+{
+    switch (key) {
+            case 27: 
+					exit(0);
+                     break;
+            case 'Q':
+            case 'q':
+					exit(0);
+                     break;
     }
     glutPostRedisplay();
 }
+    
+
 // Gerenciamento do menu com as opções de cores           
 void MenuCor(int op)
 {
@@ -239,7 +234,8 @@ int main(int argc, char *argv[])
      glutCreateWindow("Exemplo de Menu e Exibicao de Caracteres");
      glutDisplayFunc(Desenha);
      glutReshapeFunc(AlteraTamanhoJanela);
-     glutMouseFunc(GerenciaMouse);    
+     glutMouseFunc(GerenciaMouse);
+    glutKeyboardFunc(GerenciaTeclado);
      glutSpecialFunc(TeclasEspeciais); 
      Inicializa();
      glutMainLoop();
