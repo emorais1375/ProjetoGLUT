@@ -17,16 +17,16 @@
 // Variáveis
 char texto[30];
 GLfloat win, r=1, g=0, b=0, xf, yf;
-GLint view_w, view_h, primitiva = QUADRADO;
+GLint tx=0, ty=0,rx=0,ry=0, view_w, view_h, primitiva= QUADRADO;
 
 
 // Função callback chamada para fazer o desenho
 void DesenhaQ(void)
 {
-     glMatrixMode(GL_MODELVIEW);
-     glLoadIdentity();
+    // glMatrixMode(GL_MODELVIEW);
+     //glLoadIdentity();
                    
-     glClear(GL_COLOR_BUFFER_BIT);
+     //glClear(GL_COLOR_BUFFER_BIT);
      // Desenha um retângulo preenchido com a cor corrente
      glBegin(GL_POLYGON);
                glVertex2f(0.0f, 0.0f);
@@ -37,8 +37,10 @@ void DesenhaQ(void)
      glFlush();
 }
 //Desenha triangulo
+
 void DesenhaT(void)
 {
+     
      glBegin(GL_TRIANGLES);
                glVertex2f(-25.0f, -25.0f);
                glVertex2f(0.0f, 25.0f);
@@ -74,14 +76,23 @@ void Desenha(void)
      
      // Define a cor corrente
      glColor3f(r,g,b);
-
+    
+     
      // Desenha uma primitiva     
      switch (primitiva) {
-            case QUADRADO:  DesenhaQ();
+            case QUADRADO:  
+                   glTranslatef(tx, ty, 0);  // Translada
+                   glRotatef (rx,1.0f,0,0);
+                   DesenhaQ();
                             break;
-            case TRIANGULO: DesenhaT();
+            case TRIANGULO: 
+                   glTranslatef(tx, ty, 0); // Translada
+                   glRotatef (rx,1.0f,0,0);
+                   DesenhaT();
                             break;
-            case CIRCULO:   DesenhaC(0.0f,0.0f,30.0f);                       
+            case CIRCULO:   
+                   glTranslatef(tx, ty, 0); // Translada           
+                   DesenhaC(0.0f,0.0f,30.0f);                       
                             break;
      }
 
@@ -114,38 +125,57 @@ void AlteraTamanhoJanela(GLsizei w, GLsizei h)
     gluOrtho2D (-win, win, -win, win);
 }
 
-       
+// Função callback chamada para gerenciar eventos de teclado
+void GerenciaTeclado(unsigned char key, int x, int y)
+{
+    
+    if(key == 'a') {
+           win -= 20;
+    }
+    else if(key == 's') {
+           win += 20;
+    }
+    if (key == 'q') 
+    {
+        exit(0);
+    }     
+					
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D (-win, win, -win, win);
+    glutPostRedisplay();
+    
+} 
 
 // Função callback chamada para gerenciar eventos do teclado   
 // para teclas especiais, tais como F1, PgDn e Home
 void TeclasEspeciais(int key, int x, int y)
 {
-    if(key == GLUT_KEY_UP) {
-           win -= 20;
+    switch (key) {
+           
+            case GLUT_KEY_UP:
+                    ty+=10;
+                     break; 
+            case GLUT_KEY_DOWN:
+                    ty-=10;
+                     break; 
+    	    case GLUT_KEY_LEFT: 
+    	            tx-=10;
+                     break; 
+   	        case GLUT_KEY_RIGHT:  
+   	                tx+=10;
+                     break;    
+           case GLUT_KEY_PAGE_UP: // Rotate on x axis
+                    rx -= 0.1f;   
+                     break;
+           case GLUT_KEY_PAGE_DOWN:// Rotate on x axis (opposite)
+                    rx+= 0.1f;
+                      break;                     
     }
-    else if(key == GLUT_KEY_DOWN) {
-           win += 20;
-    }
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    gluOrtho2D (-win, win, -win, win);
     glutPostRedisplay();
 }
 
-// Função callback chamada para gerenciar eventos de teclado
-void GerenciaTeclado(unsigned char key, int x, int y)
-{
-    switch (key) {
-            case 27: 
-					exit(0);
-                     break;
-            case 'Q':
-            case 'q':
-					exit(0);
-                     break;
-    }
-    glutPostRedisplay();
-}
+
     
 
 // Gerenciamento do menu com as opções de cores           
@@ -228,14 +258,14 @@ int main(int argc, char *argv[])
 {
 
      glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);     
+     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);     
      glutInitWindowSize(350,300);
      glutInitWindowPosition(10,10);
      glutCreateWindow("Exemplo de Menu e Exibicao de Caracteres");
      glutDisplayFunc(Desenha);
      glutReshapeFunc(AlteraTamanhoJanela);
      glutMouseFunc(GerenciaMouse);
-    glutKeyboardFunc(GerenciaTeclado);
+     glutKeyboardFunc(GerenciaTeclado);
      glutSpecialFunc(TeclasEspeciais); 
      Inicializa();
      glutMainLoop();
