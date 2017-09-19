@@ -17,7 +17,11 @@
 // Variáveis
 char texto[30];
 GLfloat win, r=1, g=0, b=0, xf, yf;
-GLint tx=0, ty=0,rx=0,ry=0, view_w, view_h, primitiva= QUADRADO;
+GLint tx=0, ty=0,rx=0,rt=0, view_w, view_h, primitiva= QUADRADO;
+
+//void translada(double x, double y, double z){
+//	
+//}
 
 
 // Função callback chamada para fazer o desenho
@@ -101,6 +105,21 @@ void Desenha(void)
      
      glutSwapBuffers();
 }
+
+//void Rotacionar (float rt)
+//{
+//   float s = sin(angle);
+//   float c = cos(angle);
+
+//   float newX = x * c - y * s;
+//   float newY = x * s + y * c;
+
+//   x = newX;
+//   y = newY;
+
+// //  return *this;
+//}
+
 // Inicializa parâmetros de rendering
 void Inicializa (void)
 {   
@@ -139,7 +158,18 @@ void GerenciaTeclado(unsigned char key, int x, int y)
     {
         exit(0);
     }   
-				
+    if (key =='z')
+    {
+    	primitiva = QUADRADO;
+    }
+    if (key =='x')
+    {
+    	primitiva = TRIANGULO;
+    }	
+    if (key =='c')
+    {
+    	primitiva = CIRCULO;
+    }				
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D (-win, win, -win, win);
@@ -178,79 +208,79 @@ void TeclasEspeciais(int key, int x, int y)
 
     
 
-// Gerenciamento do menu com as opções de cores           
-void MenuCor(int op)
-{
-   switch(op) {
-            case 0:
-                     r = 1.0f;
-                     g = 0.0f;
-                     b = 0.0f;
-                     break;
-            case 1:
-                     r = 0.0f;
-                     g = 1.0f;
-                     b = 0.0f;
-                     break;
-            case 2:
-                     r = 0.0f;
-                     g = 0.0f;
-                     b = 1.0f;
-                     break;
-    }
-    glutPostRedisplay();
-}           
+//// Gerenciamento do menu com as opções de cores           
+//void MenuCor(int op)
+//{
+//   switch(op) {
+//            case 0:
+//                     r = 1.0f;
+//                     g = 0.0f;
+//                     b = 0.0f;
+//                     break;
+//            case 1:
+//                     r = 0.0f;
+//                     g = 1.0f;
+//                     b = 0.0f;
+//                     break;
+//            case 2:
+//                     r = 0.0f;
+//                     g = 0.0f;
+//                     b = 1.0f;
+//                     break;
+//    }
+//    glutPostRedisplay();
+//}           
 
 // Gerenciamento do menu com as opções de cores           
-void MenuPrimitiva(int op)
-{
-   switch(op) {
-            case 0:
-                     primitiva = QUADRADO;
-                     break;
-            case 1:
-                     primitiva = TRIANGULO;
-                     break;
-            case 2:
-                     primitiva = CIRCULO;
-                     break;
-    }
-    glutPostRedisplay();
-}  
-// Gerenciamento do menu principal           
-void MenuPrincipal(int op)
-{
-}
-// Criacao do Menu
-void CriaMenu() 
-{
-    int menu,submenu1,submenu2;
+//void MenuPrimitiva(int op)
+//{
+//   switch(op) {
+//            case 0:
+//                     primitiva = QUADRADO;
+//                     break;
+//            case 1:
+//                     primitiva = TRIANGULO;
+//                     break;
+//            case 2:
+//                     primitiva = CIRCULO;
+//                     break;
+//    }
+//    glutPostRedisplay();
+//}  
+//// Gerenciamento do menu principal           
+//void MenuPrincipal(int op)
+//{
+//}
+//// Criacao do Menu
+//void CriaMenu() 
+//{
+//    int menu,submenu1,submenu2;
 
-    submenu1 = glutCreateMenu(MenuCor);
-    glutAddMenuEntry("Vermelho",0);
-    glutAddMenuEntry("Verde",1);
-    glutAddMenuEntry("Azul",2);
+////    submenu1 = glutCreateMenu(MenuCor);
+////    glutAddMenuEntry("Vermelho",0);
+////    glutAddMenuEntry("Verde",1);
+////    glutAddMenuEntry("Azul",2);
 
-    submenu2 = glutCreateMenu(MenuPrimitiva);
-    glutAddMenuEntry("Quadrado",0);
-    glutAddMenuEntry("Triangulo",1);
-    glutAddMenuEntry("Circulo",2);
+//    submenu2 = glutCreateMenu(MenuPrimitiva);
+//    glutAddMenuEntry("Quadrado",0);
+//    glutAddMenuEntry("Triangulo",1);
+//    glutAddMenuEntry("Circulo",2);
 
-    menu = glutCreateMenu(MenuPrincipal);
-    glutAddSubMenu("Cor",submenu1);
-    glutAddSubMenu("Primitivas",submenu2);
-    
-    glutAttachMenu(GLUT_RIGHT_BUTTON);
-}
-// Função callback chamada para gerenciar eventos do mouse
-void GerenciaMouse(int button, int state, int x, int y)
-{        
-    if (button == GLUT_RIGHT_BUTTON)
-         if (state == GLUT_DOWN) 
-            CriaMenu();
-         
-    glutPostRedisplay();
-}
+//    menu = glutCreateMenu(MenuPrincipal);
+//    glutAddSubMenu("Cor",submenu1);
+//    glutAddSubMenu("Primitivas",submenu2);
+//    
+//    glutAttachMenu(GLUT_RIGHT_BUTTON);
+//}
+//// Função callback chamada para gerenciar eventos do mouse
+//void GerenciaMouse(int button, int state, int x, int y)
+//{        
+//    if (button == GLUT_RIGHT_BUTTON)
+//         if (state == GLUT_DOWN) 
+//            CriaMenu();
+//         
+//    glutPostRedisplay();
+//}
 
                       
 // Programa Principal 
@@ -261,10 +291,10 @@ int main(int argc, char *argv[])
      glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);     
      glutInitWindowSize(350,300);
      glutInitWindowPosition(10,10);
-     glutCreateWindow("Exemplo de Menu e Exibicao de Caracteres");
+     glutCreateWindow("Exibicao de Formas Geometricas");
      glutDisplayFunc(Desenha);
      glutReshapeFunc(AlteraTamanhoJanela);
-     glutMouseFunc(GerenciaMouse);
+//     glutMouseFunc(GerenciaMouse);
      glutKeyboardFunc(GerenciaTeclado);
      glutSpecialFunc(TeclasEspeciais); 
      Inicializa();
