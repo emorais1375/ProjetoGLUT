@@ -80,20 +80,20 @@ void Desenha(void)
      
      // Desenha uma primitiva     
      switch (primitiva) {
-            case QUADRADO:  
-                   glTranslatef(tx, ty, 0);  // Translada
-                   glRotatef (rx,1.0f,0,0);
-                   DesenhaQ();
-                            break;
-            case TRIANGULO: 
-                   glTranslatef(tx, ty, 0); // Translada
-                   glRotatef (rx,1.0f,0,0);
-                   DesenhaT();
-                            break;
+            case QUADRADO:
+                   	glTranslatef(tx, ty, 0);  // Translada
+                   	glRotatef (rx,0,0,1);
+                   	DesenhaQ();
+                   	break;
+            case TRIANGULO:
+			glTranslatef(tx, ty, 0); // Translada
+			glRotatef (rx,0,0,1);
+			DesenhaT();
+			break;
             case CIRCULO:   
-                   glTranslatef(tx, ty, 0); // Translada           
-                   DesenhaC(0.0f,0.0f,30.0f);                       
-                            break;
+                   	glTranslatef(tx, ty, 0); // Translada           
+                   	DesenhaC(0.0f,0.0f,30.0f);                       
+                        break;
      }
 
      // Exibe a posição do mouse na janela
@@ -138,8 +138,8 @@ void GerenciaTeclado(unsigned char key, int x, int y)
     if (key == 'q') 
     {
         exit(0);
-    }     
-					
+    }   
+				
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     gluOrtho2D (-win, win, -win, win);
@@ -166,10 +166,10 @@ void TeclasEspeciais(int key, int x, int y)
    	                tx+=10;
                      break;    
            case GLUT_KEY_PAGE_UP: // Rotate on x axis
-                    rx -= 0.1f;   
+                    rx -= 2.0f;   
                      break;
            case GLUT_KEY_PAGE_DOWN:// Rotate on x axis (opposite)
-                    rx+= 0.1f;
+                    rx+= 2.0f;
                       break;                     
     }
     glutPostRedisplay();
